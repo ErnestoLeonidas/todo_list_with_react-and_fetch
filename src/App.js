@@ -3,15 +3,39 @@ import React, { useState, useEffect } from "react";
 function App(props) {
 
   const [tasks, setTasks] = useState(null);
-  //this function useEffect will run only one time, when the component is finally lodaded the first time.
-  useEffect(
-    () =>
-      // here i fetch my todos from the API
+
+  useEffect(() => {
+    const getTodos = () => {
       fetch("https://assets.breatheco.de/apis/fake/todos/user/ernestoleonidas")
-        .then(r => r.json()) //convert incoming JSON formated response into an object
-        .then(data => setTasks(data)), //here it re-set the variable tasks with the incoming data
-    [] // <---- thanks to this empty array the use effect will be called only once
-  );
+      .then(r => r.json())
+      .then(data => setTasks(data))
+    }
+    getTodos()
+    /*
+    const putTodos = () => {
+      fetch('https://assets.breatheco.de/apis/fake/todos/user/ernestoleonidas', {
+      method: "PUT",
+      body: JSON.stringify(todos),
+      headers: {
+        "Content-Type": "application/json"
+      }
+    })
+    .then(resp => {
+        console.log(resp.ok); // will be true if the response is successfull
+        console.log(resp.status); // the status code = 200 or code = 400 etc.
+        console.log(resp.text()); // will try return the exact result as string
+        return resp.json(); // (returns promise) will try to parse the result as json as return a promise that you can .then for results
+    })
+    .then(data => {
+        //here is were your code should start after the fetch finishes
+        console.log(data); //this will print on the console the exact object received from the server
+    })
+    .catch(error => {
+        //error handling
+        console.log(error);
+    });
+    }*/
+  }, []);
 
   return (
   <div className="col-6 container">
@@ -47,14 +71,16 @@ function App(props) {
                 return(
                   <li className="row list-group-item d-inline-flex align-items-center" key={index}>
                   <div className="col-10" >{item.label} </div>
-                  <div className="col-2 btn"><span type="button" className="far fa-trash-alt text-end btn"></span></div>
+                  <div className="col-1 btn">
+                    {item.done ? 
+                      <span type="button" className="btn btn-success fas fa-check text-end"></span>
+                      : 
+                      <span type="button" className="btn btn-danger fas fa-times text-end"></span>
+                    }
+                  </div>
                 </li>
                 )
               }
-
-              // <li>
-              //   {item.label} ({item.done ? "done" : "not done"})
-              // </li>
             )}
           </ul>
         </div>
