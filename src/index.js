@@ -5,11 +5,7 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import '@popperjs/core';
 import 'bootstrap';
 import '@fortawesome/fontawesome-free/css/all.min.css';
-import App from './App';
 
-ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-  document.getElementById('root')
-);
+import Layout from './Layout';
+
+ReactDOM.render( <Layout />,  document.querySelector('#root') );
