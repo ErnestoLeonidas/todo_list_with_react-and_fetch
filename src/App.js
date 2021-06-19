@@ -2,15 +2,44 @@ import React, { useState, useEffect } from "react";
 
 function App(props) {
 
-  const [tasks, setTasks] = useState(null);
+  const [task, setTasks] = useState(null);
 
   useEffect(() => {
     const getTodos = () => {
       fetch("https://assets.breatheco.de/apis/fake/todos/user/ernestoleonidas")
       .then(r => r.json())
-      .then(data => setTasks(data))
+      .then(data => {
+        if (data.msg){
+          createUser();
+        } else {
+          console.log(data);
+          setTasks(data);
+        }  
+      })
     }
     getTodos()
+
+    const createUser = () => {
+      fetch('https://assets.breatheco.de/apis/fake/todos/user/ernestoleonidas', {
+        method: "POST",
+        body: JSON.stringify([]),
+        headers: {
+            "Content-Type": "application/json"
+        }
+      })
+      .then(resp => {
+          console.log("create user : "+resp.ok);
+          return resp.json();
+      })
+      .then(data => {
+          setTasks(data);
+      })
+      .catch(error => {
+          console.log(error);
+      });
+    }
+
+
     /*
     const putTodos = () => {
       fetch('https://assets.breatheco.de/apis/fake/todos/user/ernestoleonidas', {
@@ -35,47 +64,114 @@ function App(props) {
         console.log(error);
     });
     }*/
-  }, []);
+  }, [])
 
+  function addNewTask(){
+    const addTask = () =>{
+      fetch('https://assets.breatheco.de/apis/fake/todos/user/ernestoleonidas', {
+        method: "PUT",
+        body: JSON.stringify(task),
+        headers: {
+            "Content-Type": "application/json"
+        }
+      })
+      .then(resp => {
+        console.log("add task : "+resp.ok);
+        return resp.json();                    
+      })
+      .then(data => {
+        console.log(data) 
+      })
+      .catch(error => {
+        console.log(error);
+      });
+    }
+    addTask()
+  }
+
+  function addtarea(e) {
+    if (e.key === "Enter" && e.target.value !== "" && task!=="") {
+      let nt = [...task];
+      let ne = {
+          label: e.target.value,
+          done: false
+      }
+      let ntasks=nt.concat(ne);
+          setTasks(ntasks);          
+          e.target.value = "";
+
+      console.log('mi task :' + task);
+      addNewTask()
+    }
+  }
+
+  function deleteTask(e) {
+    let task_updated=[];
+    task.map((elem,index)=>{
+      if(index!==e){
+          task_updated.push(elem);
+      }
+      return task_updated;
+    })
+    setTasks(task_updated)
+
+
+  }
+
+  function deleteAll(){
+    const deleteAllTasks= ()=>{
+      fetch('https://assets.breatheco.de/apis/fake/todos/user/ernestoleonidas', {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json"
+        }
+      })
+      .then(resp => {
+          //console.log(resp.text());
+          return resp.json();
+      })
+      .then(data => {
+          console.log(data)
+          //setTasks([])
+      })
+      .catch(error => {
+          console.log(error);
+      });
+    }
+    deleteAllTasks();
+    setTasks([])
+  }
+
+  
   return (
   <div className="col-6 container">
       <div className="row bg-light text-center py-3">
-        <h1 className="text-center"> ToDos API </h1>
+        <h1 className="text-center"> ToDos API with fetch</h1>
       </div>
       <div className="row my-3">
         <div className="input-group input-group-lg">
           <span className="input-group-text" id="inputGroup-sizing-lg">Tarea</span>
-          <input
-            type="text"
-            className="form-control"
-            aria-label="Sizing example input"
-            aria-describedby="inputGroup-sizing-lg"
-            placeholder="Ingrese su tarea acá"
-            name="label"
-            onKeyUp={e =>
-              //listen to the key up and wait for the return key to be pressed (KeyCode === 13)
-              e.keyCode === 13 &&
-              setTasks(tasks.concat({ label: e.target.value, done: false }))
-            }
-          />
+          <input 
+            className="form-control col-12 p-2" 
+            placeholder="add task" 
+            onKeyUp={addtarea} />
         </div>
-
       </div>
       <div className="row">
         <div className="container">
           <ul className="list-group">
             {/* <li className="list-group-item active" aria-current="true">An active item</li> */}
-            {tasks === null
+            {task === null
               ? "Loading..."
-              : tasks.map((item, index) => { 
+              : task.map((item, index) => { 
                 return(
-                  <li className="row list-group-item d-inline-flex align-items-center" key={index}>
+                  <li className="row list-group-item d-inline-flex align-items-center" id={index} key={index}>
                   <div className="col-10" >{item.label} </div>
                   <div className="col-1 btn">
                     {item.done ? 
-                      <span type="button" className="btn btn-success fas fa-check text-end"></span>
+                      <span type="button" className="btn btn-success fas fa-check text-end" onClick={()=> deleteTask(index)}></span>
                       : 
-                      <span type="button" className="btn btn-danger fas fa-times text-end"></span>
+                      <span type="button" className="btn btn-danger fas fa-times text-end" onClick={()=> deleteTask(index)}></span>
                     }
                   </div>
                 </li>
@@ -83,6 +179,7 @@ function App(props) {
               }
             )}
           </ul>
+          <button type="button" className="btn btn-warning" onClick={deleteAll}>Delete All Tasks</button>
         </div>
       </div>
     </div>
