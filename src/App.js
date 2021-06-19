@@ -145,12 +145,12 @@ function App(props) {
   
   return (
   <div className="col-6 container">
-      <div className="row bg-light text-center py-3">
-        <h1 className="text-center"> ToDos API with fetch</h1>
+      <div className="row bg-light justify-content-center py-3">
+        <h1> ToDos API with fetch</h1>
       </div>
       <div className="row my-3">
         <div className="input-group input-group-lg">
-          <span className="input-group-text" id="inputGroup-sizing-lg">Tarea</span>
+          <span className="input-group-text" id="inputGroup-sizing-lg">Task</span>
           <input 
             className="form-control col-12 p-2" 
             placeholder="add task" 
@@ -179,7 +179,9 @@ function App(props) {
               }
             )}
           </ul>
-          <button type="button" className="btn btn-warning" onClick={deleteAll}>Delete All Tasks</button>
+        </div>
+        <div className="col d-flex justify-content-center"> 
+          <button type="button" className="btn btn-warning mt-2" onClick={deleteAll}>Borrar Todo</button>
         </div>
       </div>
     </div>
