@@ -169,6 +169,7 @@ function App(props) {
                   <div className="col-10" >{item.label} </div>
                   <div className="col-1 btn">
                     {item.done ? 
+                      //hay que cambiar el json para actualizar el estado de false a true
                       <span type="button" className="btn btn-success fas fa-check text-end" onClick={()=> deleteTask(index)}></span>
                       : 
                       <span type="button" className="btn btn-danger fas fa-times text-end" onClick={()=> deleteTask(index)}></span>
